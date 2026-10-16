@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lanmap"
+version = "1.0.0"
+description = "Map a local network and render an HTML report: topology, address map, open ports, data flows and a VLAN plan."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["rich>=12"]
+
+[project.scripts]
+lanmap = "lanmap:main"
+
+[tool.setuptools]
+py-modules = ["lanmap"]

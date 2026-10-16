@@ -1,0 +1,10 @@
+# scan output contains real network details - keep it out of git
+lanmap-*.html
+lanmap-*.json
+demo.html
+demo.json
+
+__pycache__/
+build/
+dist/
+*.egg-info/
