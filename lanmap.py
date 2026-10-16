@@ -1911,6 +1911,16 @@ def print_summary(scan: Scan, paths: list):
 # ─────────────────────────────────── CLI ───────────────────────────────────
 
 
+def elevate():
+    """Re-run this exact command under sudo, keeping the user's Python and cwd."""
+    if not shutil.which("sudo"):
+        raise SystemExit("--capture needs root, and sudo is not available. Run as root or pass --no-sudo to skip capture.")
+    cmd = ["sudo", "--", sys.executable, os.path.abspath(sys.argv[0]), *sys.argv[1:]]
+    if not QUIET:
+        console.print("  [grey50]·[/] [grey62]--capture needs root; re-running with sudo[/]")
+    os.execvp("sudo", cmd)
+
+
 def main(argv=None):
     global QUIET
     ap = argparse.ArgumentParser(
@@ -1937,6 +1947,7 @@ def main(argv=None):
     ap.add_argument("--include-virtual", action="store_true", help="include docker/bridge/vpn interfaces")
     ap.add_argument("--allow-public", action="store_true", help="permit non-RFC1918 targets you are authorised to scan")
     ap.add_argument("--max-hosts", type=int, default=4096, help="refuse targets larger than this (default 4096)")
+    ap.add_argument("--no-sudo", action="store_true", help="don't re-run under sudo when --capture needs root")
     ap.add_argument("--open", action="store_true", help="open the report in a browser when done")
     ap.add_argument("--demo", action="store_true", help="generate a report from synthetic data (no scanning)")
     ap.add_argument("--from-json", metavar="FILE", help="render a report from a saved JSON scan")
@@ -1963,6 +1974,8 @@ def main(argv=None):
                 raise SystemExit("Live scanning needs Linux (iproute2). Use --demo or --from-json elsewhere.")
             if not shutil.which("ip"):
                 raise SystemExit("The 'ip' command (iproute2) is required.")
+            if opts.capture and not is_root() and not opts.no_sudo:
+                elevate()
             if opts.capture is None:
                 opts.capture = 30 if is_root() else 0
             scan = asyncio.run(do_scan(opts))

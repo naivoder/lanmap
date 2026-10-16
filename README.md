@@ -26,7 +26,7 @@ Optional extras that improve results: `nmap` or `arp-scan` (full MAC-vendor data
 
 ```bash
 lanmap                          # scan every attached subnet (unprivileged)
-sudo lanmap --capture 300       # + arp-scan + 5 min passive traffic capture
+lanmap --capture 300            # + arp-scan + 5 min passive traffic capture (re-runs itself under sudo)
 lanmap -t 10.0.20.0/24 -p 1-1024,3389,8080
 lanmap --demo --open            # sample report, no scanning
 lanmap --from-json scan.json    # re-render a saved scan
